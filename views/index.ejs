@@ -1,0 +1,36 @@
+<% include ./head %>
+    <div class="container">
+        <br />
+        <!-- <p class="pull-right">Welcome <%= username %></p> -->
+         <div class="pull-left"> Hi, <strong> <%= username %> </strong></div> 
+        <H1><img src="images/icon/apple-icon-72x72.png"> Restaurants 
+            <a href="/restaurant/new">
+                <button class="btn btn-primary">
+                    <span class="glyphicon glyphicon-plus"></span> Add</button>
+            </a>
+            <a href="/logout">
+                <button class="btn btn-primary">
+                    <span class="glyphicon glyphicon-log-out"></span> Logout</button>
+            </a>
+        </H1> <div style="margin-right: 200px;"> 
+            <table class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+            <% restaurants.forEach(function(rt) { %>
+                <tr>
+                    <td>
+                        <%= rt.restaurant_id %>
+                    </td>
+                    <td>
+                        <a href=<%="/restaurant/display/" +rt._id %>>
+                            <%= rt.name %>
+                        </a>
+                    </td>
+                </tr>
+                <% }) %>
+        </table></div>
+        
+        <hr style="margin-right: 200px;">
+        <% include ./foot %>

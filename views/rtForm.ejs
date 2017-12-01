@@ -1,0 +1,62 @@
+<% include ./head %>
+    <div class="container">
+        <H1><%= (type=='edit')?"Edit Restaurant":"Add Restaurant" %>
+                <button class="btn btn-primary" onclick="window.history.back()">
+                    <span class="glyphicon glyphicon-home"></span> Back</button>
+        </H1>
+        <form id="addRt-form" class="input-margin" role='form' action=<%= (type=="edit")?"/restaurant/edit/"+restaurant._id:"/restaurant" %> method="POST" encType="multipart/form-data">
+            <div class="form-group">
+                <input type="text" class="form-control" name="name" id="rtName" placeholder="Restaurant Name" required value=<%= restaurant.name||"" %> >
+            </div>
+            <div class="form-group">
+                    <input type="text" class="form-control" name="borough" id="rtBorough" placeholder="Borough" value=<%= restaurant.borough||"" %>>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="cuisine" id="rtCuisine" placeholder="Cuisine" value=<%= restaurant.cuisine||"" %>>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="street" id="rtStreet" placeholder="Street" value=<%=                  restaurant.address.street||"" %>>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="building" id="rtBuilding" placeholder="Building" value=<%= restaurant.address.building||"" %>>
+            </div>
+            <div class="form-group">
+                <input type="number" class="form-control" name="zipcode" id="rtZipcode" placeholder="Zipcode" value=<%= restaurant.address.zipcode||"" %>>
+            </div>
+            <div class="form-group">
+                <input type="number" step="any" class="form-control" name="latitude" id="rtGpsLat" placeholder="GPS Coordinates (Latitude)" value=<%= restaurant.address.coord.latitude||"" %>>
+            </div>
+            <div class="form-group">
+                    <input type="number" step="any" class="form-control" name="longtitude" id="rtGpsLon" placeholder="GPS Coordinates (Longtitude)" value=<%= restaurant.address.coord.longtitude||"" %>>
+            </div>
+            <div class="form-group input-margin">
+                <input type="file" name="rtPhoto" id="rtPhoto" accept="image/*" onchange="loadImageFileAsURL()">
+                <div class="input-margin" id="imgPreview"></div>
+            </div>
+            <button id="addRt-btn" type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+            <script>
+                function loadImageFileAsURL() {
+                    var filesSelected = document.getElementById("rtPhoto").files
+                    if (filesSelected.length > 0) {
+                        var fileToLoad = filesSelected[0]
+
+                        var fileReader = new FileReader()
+
+                        fileReader.onload = function (fileLoadedEvent) {
+                            var srcData = fileLoadedEvent.target.result // <--- data: base64
+                            var divTest = document.getElementById("imgPreview")
+                            var newImage = document.createElement('img')
+                            newImage.src = srcData
+
+                            divTest.innerHTML = newImage.outerHTML
+                            // document.getElementById("rtPhoto").value = srcData.toString()
+                            console.log(srcData)
+                        }
+
+                        fileReader.readAsDataURL(fileToLoad)
+                    }
+                }
+            </script>
+            <% include ./foot %>

@@ -1,0 +1,129 @@
+<% include ./head %>
+    <div class="container">
+        <% if(Object.keys(restaurant).length == 0){ %>
+            <h2>Restaurant ID not found</h2>
+            <% } else { %>
+                <!-- <p>
+                    <%= JSON.stringify(restaurant) %>
+                </p> -->
+                <% if(Object.keys(restaurant.photo).length == 0){ %>
+                    <img src=<%='/images/default.png' %> />
+                    <% }else{ %>
+                        <img src=<%="data:" +restaurant.photo.mimetype+ ";base64,"+JSON.parse(JSON.stringify(restaurant.photo.data)) %> />
+                        <% } %>
+                            <hr style="margin-right: 250px;">
+                            <h1 class="input-margin">
+                                <%= restaurant.name %>
+                            </h1>
+                            <p>
+                                <strong>Borough: </strong>
+                                <%= restaurant.borough||'Not Provided' %>
+                            </p>
+                            <p>
+                                <strong>Cuisine: </strong>
+                                <%= restaurant.cuisine||'Not Provided' %>
+                            </p>
+                            <p>
+                                <strong>Street: </strong>
+                                <%= restaurant.address.street||'Not Provided' %>
+                            </p>
+                            <p>
+                                <strong>Building: </strong>
+                                <%= restaurant.address.building||'Not Provided' %>
+                            </p>
+                            <p>
+                                <strong>Zipcode: </strong>
+                                <%= restaurant.address.zipcode||'Not Provided' %>
+                            </p>
+                            <p>
+                                <strong>GPS: </strong>
+                                <% if(restaurant.address.coord.longtitude&&restaurant.address.coord.latitude){ %>
+                                    <%= "["+restaurant.address.coord.latitude+","+restaurant.address.coord.longtitude+"]" %>
+                                        <div id="map" style="width: 500px; height: 400px;"></div>
+                                        <% }else{ %>
+                                            Not Provided
+                                            <% } %>
+                            </p>
+                            <p>
+                                <strong>Created by: </strong>
+                                <%= restaurant.owner||'Not Provided' %>
+                            </p>
+                            <p>
+                                <strong>Rating: </strong>
+                                <ol>
+                                    <% restaurant.grades.forEach(function(rate) { %>
+                                        <li>
+                                            <%= rate.score+" ("+rate.user+") " %>
+                                        </li>
+                                        <% }) %>
+                                </ol>
+                            </p>
+                            <% } %>
+                                <div class="input-margin">
+                                    <a class="btn btn-primary" role="button" id="home-btn" href="/restaurant">
+                                        <span class="glyphicon glyphicon-home"></span> Back
+                                    </a>
+                                    <% if(Object.keys(restaurant).length != 0){ %>
+                                        <a class="btn btn-warning" role="button" data-toggle="modal" data-target="#rateModal" href="#">
+                                            <span class="glyphicon glyphicon-star"></span> Rate
+                                        </a>
+                                        <a class="btn btn-success" role="button" href=<%="/restaurant/edit/" +restaurant._id+"?owner="+restaurant.owner %>>
+                                            <span class="glyphicon glyphicon-edit"></span> Edit
+                                        </a>
+                                        <a class="btn btn-danger" role="button" id="removeRt-btn" href=<%="/restaurant/delete/" +restaurant._id %>>
+                                            <span class="glyphicon glyphicon-remove"></span> Delete
+                                        </a>
+                                        <% } %>
+                                </div>
+                                    <hr>
+                                <!-- Modal -->
+                                <div class="modal fade" id="rateModal" tabindex="-1" role="dialog" aria-labelledby="rateModal" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <h5 class="modal-title">Rate the Restaurant ( 1 - 10 )</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="rate-form" role='form' action=<%="/restaurant/rate/" +restaurant._id %> method="POST" encType="multipart/form-data">
+                                                    <div class="form-group">
+                                                        <input type="number" min="1" max="10" value="10" class="form-control" name="rate" id="rate">
+                                                    </div>
+                                                    <button id="rate-btn" type="submit" class="btn btn-warning">Submit</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display:none" id="rt-obj">
+                                    <%= JSON.stringify(restaurant) %>
+                                </div>
+    </div>
+    <script>
+        $('#removeRt-btn').on('click', function () {
+            return confirm('Do you want to delete this restaurant?');
+        })
+    </script>
+    <script>
+        function initMap() {
+            var restaurant = JSON.parse($("#rt-obj").html())
+            var myLatLng = {
+                lat: parseFloat(restaurant.address.coord.latitude),
+                lng: parseFloat(restaurant.address.coord.longtitude)
+            }
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 16,
+                center: myLatLng
+            })
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                title: restaurant.name
+            })
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAqvBPCfehZLkURYLbXhWauUVWQLxlFyU&callback=initMap">
+    </script>
+    <% include ./foot %>

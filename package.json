@@ -22,7 +22,7 @@
     "cookie-session": "^2.0.0-beta.3",
     "ejs": "^2.5.7",
     "express": "^4.13.4",
-    "express-fileupload": "^0.3.0",
+    "express-fileupload": "^1.1.9",
     "mongodb": "^2.1.7",
     "morgan": "^1.7.0",
     "nunjucks": "^2.4.1",
